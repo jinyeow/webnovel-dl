@@ -1,0 +1,13 @@
+name: webnovel-dl
+version: 0.1.0
+
+authors:
+  - jinyeow <jin-yeow@outlook.com>
+
+targets:
+  webnovel-dl:
+    main: src/webnovel-dl.cr
+
+crystal: 0.24.1
+
+license: MIT
