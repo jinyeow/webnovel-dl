@@ -1,7 +1,8 @@
 require "./webnovel-dl/*"
 require "./webnovel-dl/provider/webnovel.cr"
 
-# TODO: Write documentation
+# `webnovel-dl` is a utility to download online fiction.
+# See docs/supported_sites.md.
 module WebnovelDL
 
   USAGE = <<-STRING

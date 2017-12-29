@@ -49,6 +49,7 @@ module WebnovelDL
       WebnovelDL::Model::Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
     end
 
+    # TODO: add error checking begin/rescue
     private def get_json(url : String)
       res = @client.get(url)
       body = res.body
@@ -61,7 +62,7 @@ module WebnovelDL
     end
 
     private def get_chapter_url(book_id : String)
-      "https://www.webnovel.com/apiajax/chapter/GetChapterList\
+      "https://www.webnovel.com/apiajax/chapter/GetChapterList?\
         _csrfToken=#{@csrf}&bookId=#{book_id}"
     end
   end
