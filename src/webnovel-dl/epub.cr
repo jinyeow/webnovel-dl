@@ -1,3 +1,4 @@
+require "uuid"
 require "zip"
 
 require "./model/fiction"
@@ -44,8 +45,7 @@ module WebnovelDL
 
     property fiction, uuid
 
-    def initialize(@fiction : Fiction, @uuid : String)
-      @uuid = generateUUID
+    def initialize(@fiction : Fiction, @uuid : String = UUID.random.to_s)
     end
 
     def container : String
