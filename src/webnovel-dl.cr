@@ -1,5 +1,5 @@
 require "./webnovel-dl/*"
-require "./webnovel-dl/provider/webnovel.cr"
+require "./webnovel-dl/provider/*"
 
 # `webnovel-dl` is a utility to download online fiction.
 # See docs/supported_sites.md.
@@ -9,7 +9,7 @@ module WebnovelDL
   Webnovel-dl
 
   Usage:
-    webnovel-dl <provider> <id>
+    #{PROGRAM_NAME} <provider> <id>
 
   Options:
     --help     Show this message.
@@ -23,7 +23,7 @@ module WebnovelDL
     else
       case ARGV.shift
       when "webnovel.com"
-        provider = WebnovelDL::Webnovel.new
+        provider = Webnovel.new
         fiction  = provider.get_fiction(ARGV.shift)
       else
         puts <<-ERROR
