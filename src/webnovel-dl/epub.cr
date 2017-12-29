@@ -144,18 +144,18 @@ module WebnovelDL
     end
 
     private def generateUUID : String
-      PATTERN = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
+      pattern = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
       t = Time.new.epoch
       proc = ->(c : Char) {
         r = (t.to_f + rand(1.0) * 16).to_i % 16
         t = (t.to_f.to_i.to_f / 16).to_i
-        if c != ?x
+        if c != 'x'
           r = (r & 0x3 | 0x8)
         end
         r.to_s(16)[-1].to_s
       }
-      PATTERN.chars.map do |c|
-        if c == ?x || c == ?y
+      pattern.chars.map do |c|
+        if c == 'x' || c == 'y'
           proc.call(c)
         else
           c
