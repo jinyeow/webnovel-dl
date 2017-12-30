@@ -76,8 +76,11 @@ OptionParser.parse! do |parser|
 
   parser.separator
 
-  parser.on("-h", "--help", "Show this message.") { puts parser; exit 1 }
-  parser.on("-v", "--version", "Show version information.") { puts WebnovelDL::VERSION; exit 1 }
+  parser.on("-h", "--help", "Show this message.") { puts parser; exit }
+  parser.on("-v", "--version", "Show version information.") {
+    puts "v#{WebnovelDL::VERSION}"
+    exit
+  }
 end
 
 pp ARGV if opts[:debug]?
