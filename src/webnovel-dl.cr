@@ -41,12 +41,12 @@ module WebnovelDL
     begin
       raise "Couldn't get fiction." unless fiction
 
-      if opts[:debug]
+      if opts[:debug]?
         pp provider
         pp fiction
       end
 
-      if opts[:output]
+      if opts[:output]?
         Dir.mkdir(opts[:output]) unless Dir.exists? opts[:output]
         Dir.cd(opts[:output])
       end
@@ -58,7 +58,7 @@ module WebnovelDL
       puts "Done."
     rescue ex
       puts "FUCK YOU"
-      puts ex.message if opts[:debug]
+      puts ex.message if opts[:debug]?
       exit 2
     end
   end
@@ -80,6 +80,6 @@ OptionParser.parse! do |parser|
   parser.on("-v", "--version", "Show version information.") { puts WebnovelDL::VERSION; exit 1 }
 end
 
-pp ARGV if opts[:debug]
+pp ARGV if opts[:debug]?
 
 WebnovelDL.main(opts)
