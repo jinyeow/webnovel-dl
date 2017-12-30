@@ -47,6 +47,8 @@ module WebnovelDL
         get_chapter(book_id, chap["chapterId"].to_s)
       end
       WebnovelDL::Model::Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+    rescue
+      nil
     end
 
     # TODO: add error checking begin/rescue

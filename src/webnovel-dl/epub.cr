@@ -64,7 +64,7 @@ module WebnovelDL
     end
 
     def content : String
-      i = 0
+      i = 1
       names = Array(ChapterNameAssoc)
       @fiction.chapters.each do |ch|
         names.push(ChapterNameAssoc.new(ch.title, "chapter#{i.to_s}"))
@@ -104,7 +104,7 @@ module WebnovelDL
     end
 
     def nav : String
-      i = 0
+      i = 1
       names = Array(ChapterNameAssoc)
       @fiction.chapters.each do |ch|
         names.add(ChapterNameAssoc.new(ch.title, "chapter#{i.to_s}"))
@@ -136,13 +136,46 @@ module WebnovelDL
     end
 
     def generate_chapter(chapter : Chapter) String
-      # TODO
+      result = <<-STRING
+      <?xml version="1.0" encoding="UTF-8"?>
+      <html xmlns="http://www.w3.org/1999/xhtml"
+            xmlns:ops="http://www.idpf.org/2007/ops"
+            xml:lang="en">
+        <head>
+          <title>#{chapter.title}</title>
+          <link href="style.css" rel="stylesheet" type="text/css" />
+        </head>
+        <body>
+          <section ops:type="chapter">
+            <h2 class="chapter-title">$1</h2>
+            #{chapter.content}
+          </section>
+        </body>
+      </html>
+      STRING
     end
 
-    def render(path : String)
-      # TODO
+    def render(filename : String)
+      file = Dir.current + filename
+      File.open(file, "w") do |f|
+        Zip::Writer.open(f) do |zip|
+          zip.add "mimetype", "application/epub+zip"
+          zip.add "META-INF/container.xml", container()
+          zip.add "content.opf", content()
+          zip.add "nav.xhtml", nav()
+          zip.add "ssp.otf", "../ssp.otf"
+          zip.add "style.css", CSS
+
+          i = 1
+          @fiction.chapters.each do |ch|
+            zip.add "chapter#{i}.xhtml", generate_chapter(ch)
+            i += 1
+          end
+        end
+      end
     end
 
+    # NOTE: unused in favor of UUID.random
     private def generateUUID : String
       pattern = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
       t = Time.new.epoch

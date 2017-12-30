@@ -37,9 +37,15 @@ module WebnovelDL
     end
 
     begin
-      # TODO: convert/render content into epub format
+      raise "Couldn't get fiction." unless fiction
+
       pp provider
       pp fiction
+
+      doc = Epub.new(fiction)
+      Dir.mkdir(fiction.title) unless Dir.exists? fiction.title
+      Dir.cd(fiction.title) { doc.render("#{fiction.title}.epub") }
+      puts "Done."
     rescue
       puts "FUCK YOU"
       exit 2
