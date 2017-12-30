@@ -63,7 +63,7 @@ module WebnovelDL
   end
 end
 
-opts = {} of Symbol => Bool | String
+opts = {} of Symbol => String
 OptionParser.parse! do |parser|
   # parser.banner = USAGE
 
@@ -71,11 +71,11 @@ OptionParser.parse! do |parser|
 
   parser.separator
 
-  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = true }
+  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = "1" }
 
   parser.separator
 
-  parser.on("-h", "--help", "Show this message.") { puts USAGE; exit 1 }
+  parser.on("-h", "--help", "Show this message.") { puts parser; exit 1 }
   parser.on("-v", "--version", "Show version information.") { puts WebnovelDL::VERSION; exit 1 }
 end
 
