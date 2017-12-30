@@ -28,7 +28,7 @@ module WebnovelDL
       id      = data["data"]["chapterInfo"]["chapterId"].to_s
       content = data["data"]["chapterInfo"]["content"].to_s
 
-      content = "<p>#{content.gsub("\r\n", "</p><p>")}</p>"
+      content = "<p>#{content.gsub(/[\r\n]+/, "</p><p>")}</p>"
 
       WebnovelDL::Model::Chapter.new(title, content, id).tap { |c| after_chapter(c) }
     end
