@@ -18,7 +18,7 @@ module WebnovelDL
     --version  Show version.
   STRING
 
-  def self.main(opts : Hash of Symbol => String|Bool)
+  def self.main(opts : Hash)
     if ARGV.size < 1
       puts USAGE
       exit 1
@@ -63,7 +63,7 @@ module WebnovelDL
   end
 end
 
-opts = {}
+opts = {} of Symbol => Bool | String
 OptionParser.parse! do |parser|
   # parser.banner = USAGE
 
