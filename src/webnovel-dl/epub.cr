@@ -116,14 +116,14 @@ module WebnovelDL
             xmlns:ops="http://www.idpf.org/2007/ops"
             xml:lang="en">
         <head>
-          <title>ToC</title>
+          <title>Table of Contents</title>
           <link href="style.css" rel="stylesheet" type="text/css" />
         </head>
         <body>
          <nav ops:type="toc">
           <h1 class="fiction-title">#{@fiction.title}</h1>
+          <a href="nav.xhtml">Table of Contents</a>
           <ol>
-            <li><a href="nav.xhtml">Toc</a></li>
             #{names.reduce("") do |acc, name|
                 acc + "<li><a href=\"" + name.file + ".xhtml\">" + name.title + "</a></li>"
               end}
@@ -147,7 +147,7 @@ module WebnovelDL
         </head>
         <body>
           <section ops:type="chapter">
-            <h2 class="chapter-title">$1</h2>
+            <h2 class="chapter-title">#{chapter.title}</h2>
             #{chapter.content}
           </section>
         </body>
@@ -156,7 +156,7 @@ module WebnovelDL
     end
 
     def render(filename : String)
-      file = Dir.current + filename
+      file = filename
       File.open(file, "w") do |f|
         Zip::Writer.open(f) do |zip|
           zip.add "mimetype", "application/epub+zip"
