@@ -56,8 +56,9 @@ module WebnovelDL
       Dir.cd(fiction.title)
       doc.render("#{fiction.title}.epub")
       puts "Done."
-    rescue
+    rescue ex
       puts "FUCK YOU"
+      puts ex.message if opts[:debug]
       exit 2
     end
   end
