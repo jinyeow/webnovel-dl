@@ -45,7 +45,7 @@ module WebnovelDL
 
     property fiction, uuid
 
-    def initialize(@fiction : Fiction, @uuid : String = UUID.random.to_s)
+    def initialize(@fiction : WebnovelDL::Model::Fiction, @uuid : String = UUID.random.to_s)
     end
 
     def container : String
@@ -65,7 +65,7 @@ module WebnovelDL
 
     def content : String
       i = 1
-      names = Array(ChapterNameAssoc)
+      names = Array(ChapterNameAssoc).new
       @fiction.chapters.each do |ch|
         names.push(ChapterNameAssoc.new(ch.title, "chapter#{i.to_s}"))
         i += 1
@@ -89,14 +89,14 @@ module WebnovelDL
           <item id="style" href="style.css" media-type="text/css" />
           <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/>
           #{names.reduce("") do |acc, name|
-              acc + "<item id=\"" + b.file + "\" href=\"" + b.file + \
+              acc + "<item id=\"" + name.file + "\" href=\"" + name.file + \
                 ".xhtml\" mediatype=\"application/xhtml+xml\" />"
             end}
         </manifest>
         <spine>
           <itemref idref="nav"/>
           #{names.reduce("") do |acc, name|
-              acc + "<itemref idref=\"" + b.file + "\" />"
+              acc + "<itemref idref=\"" + name.file + "\" />"
             end}
         </spine>
       </package>
@@ -105,9 +105,9 @@ module WebnovelDL
 
     def nav : String
       i = 1
-      names = Array(ChapterNameAssoc)
+      names = Array(ChapterNameAssoc).new
       @fiction.chapters.each do |ch|
-        names.add(ChapterNameAssoc.new(ch.title, "chapter#{i.to_s}"))
+        names.push(ChapterNameAssoc.new(ch.title, "chapter#{i.to_s}"))
         i += 1
       end
       result = <<-STRING
@@ -125,7 +125,7 @@ module WebnovelDL
           <ol>
             <li><a href="nav.xhtml">Toc</a></li>
             #{names.reduce("") do |acc, name|
-                acc + "<li><a href=\"" + b.file + ".xhtml\">" + b.title + "</a></li>"
+                acc + "<li><a href=\"" + name.file + ".xhtml\">" + name.title + "</a></li>"
               end}
           </ol>
       
@@ -135,7 +135,7 @@ module WebnovelDL
       STRING
     end
 
-    def generate_chapter(chapter : Chapter) String
+    def generate_chapter(chapter : WebnovelDL::Model::Chapter) String
       result = <<-STRING
       <?xml version="1.0" encoding="UTF-8"?>
       <html xmlns="http://www.w3.org/1999/xhtml"
