@@ -5,7 +5,7 @@ require "./model/fiction"
 
 module WebnovelDL
   abstract class Provider
-    abstract def get_chapter(book_id : String, chapter_id : String) : Chapter
+    abstract def get_chapter(book_id : String = "", chapter_id : String) : Chapter
     abstract def get_fiction(book_id : String) : Fiction
 
     def after_chapter(chapter : WebnovelDL::Model::Chapter, num : Int32 | String = "")
