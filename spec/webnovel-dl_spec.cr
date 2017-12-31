@@ -1,6 +1,6 @@
 require "./spec_helper"
 
-describe Webnovel::Dl do
+describe WebnovelDL do
   # TODO: Write tests
 
   it "works" do

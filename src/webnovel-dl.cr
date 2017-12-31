@@ -7,19 +7,9 @@ require "./webnovel-dl/provider/*"
 # See docs/supported_sites.md.
 module WebnovelDL
 
-  USAGE = <<-STRING
-  Webnovel-dl
-
-  Usage:
-    #{PROGRAM_NAME} <provider> <id>
-
-  Options:
-    --help     Show this message.
-    --version  Show version.
-  STRING
-
   def self.main(opts : Hash)
-    if ARGV.size < 1
+    if ARGV.size < 2
+      puts "[!] ERROR: missing arguments for provider and/or book id."
       puts USAGE
       exit 1
     else
@@ -64,25 +54,45 @@ module WebnovelDL
   end
 end
 
+USAGE = <<-STRING
+Usage:
+  #{PROGRAM_NAME} [provider] [novel id]
+
+STRING
+
 opts = {} of Symbol => String
 OptionParser.parse! do |parser|
-  # parser.banner = USAGE
-
-  parser.on("-o DIRECTORY", "--output=DIRECTORY", "Specify an output directory") { |o| opts[:output] = o }
-
-  parser.separator
-
-  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = "1" }
-
-  parser.separator
+  parser.banner = USAGE
 
   parser.on("-h", "--help", "Show this message.") { puts parser; exit }
   parser.on("-v", "--version", "Show version information.") {
     puts "v#{WebnovelDL::VERSION}"
     exit
   }
+  
+  parser.separator("\nOUTPUT OPTIONS")
+
+  parser.on("-o DIRECTORY", "--output=DIRECTORY", "Specify an output directory") { |o|
+    opts[:output] = o
+  }
+
+  parser.missing_option { puts "[!] ERROR: output argument required."; exit 2 }
+
+  parser.separator("\nDEBUG OPTIONS")
+
+  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = "1" }
+
+  parser.invalid_option do |o|
+    puts "[!] ERROR: #{o} is not a valid option."
+    puts "    See webnovel-dl --help for a list of valid options."
+    exit 2
+  end
+
+  # NOTE: maybe can use #unknown_args to pass along the provider and book id with the 
+  #   opts Hash instead of as ARGV.
 end
 
 pp ARGV if opts[:debug]?
 
 WebnovelDL.main(opts)
+
