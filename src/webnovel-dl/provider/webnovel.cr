@@ -30,7 +30,11 @@ module WebnovelDL
 
       content = "<p>#{content.gsub(/[\r\n]+/, "</p><p>")}</p>"
 
-      WebnovelDL::Model::Chapter.new(title, content, id).tap { |c| after_chapter(c) }
+      WebnovelDL::Model::Chapter.new(title, content, id)
+    end
+
+    def get_chapter(book_id : String, chapter_id : String, num : Int32)
+      get_chapter(book_id, chapter_id).tap { |c| after_chapter(c, num) }
     end
 
     def get_fiction(book_id : String)
@@ -43,8 +47,8 @@ module WebnovelDL
       url      = get_content_url(book_id, chapters.first["chapterId"].to_s)
       author   = get_json(url)["data"]["bookInfo"]["authorName"].to_s
 
-      chapters = chapters.map do |chap|
-        get_chapter(book_id, chap["chapterId"].to_s)
+      chapters = chapters.map_with_index do |chap, i|
+        get_chapter(book_id, chap["chapterId"].to_s, i + 1)
       end
       WebnovelDL::Model::Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
     rescue

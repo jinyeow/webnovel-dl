@@ -8,9 +8,9 @@ module WebnovelDL
     abstract def get_chapter(book_id : String, chapter_id : String) : Chapter
     abstract def get_fiction(book_id : String) : Fiction
 
-    def after_chapter(chapter : WebnovelDL::Model::Chapter)
+    def after_chapter(chapter : WebnovelDL::Model::Chapter, num : Int32 | String = "")
       puts "Downloading ".colorize(:green).to_s + \
-        "chapter " + \
+        "chapter " + (num.is_a?(Int32) ? "#{num.to_s.rjust(4, '0')}. " : num) + \
         "#{chapter.title}".colorize(:light_magenta).to_s
     end
 
