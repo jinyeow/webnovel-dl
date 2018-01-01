@@ -1,9 +1,5 @@
 require "./spec_helper"
 
 describe WebnovelDL do
-  # TODO: Write tests
-
-  it "works" do
-    false.should eq(true)
-  end
+  # TODO: Write tests - How should I test the this?
 end
