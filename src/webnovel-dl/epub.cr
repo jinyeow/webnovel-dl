@@ -43,13 +43,15 @@ module WebnovelDL
       end
     end
 
-    property fiction, uuid
+    property fiction
+    property uuid : String
 
-    def initialize(@fiction : WebnovelDL::Model::Fiction, @uuid : String = UUID.random.to_s)
+    def initialize(@fiction : WebnovelDL::Model::Fiction)
+      @uuid = UUID.random.to_s
     end
 
     def container : String
-      c = <<-STRING
+      <<-STRING
       <?xml version="1.0" encoding="UTF-8"?>
       <container
         xmlns="urn:oasis:names:tc:opendocument:xmlns:container"

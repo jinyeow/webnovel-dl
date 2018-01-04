@@ -2,20 +2,32 @@ require "../spec_helper"
 
 describe WebnovelDL::Epub do
   describe "#container" do
+    it "creates a String of XML for the container file" do
+      expected_output = <<-STRING
+      <?xml version="1.0" encoding="UTF-8"?>
+      <container
+        xmlns="urn:oasis:names:tc:opendocument:xmlns:container"
+        version="1.0">
+        <rootfiles>
+          <rootfile
+            full-path="content.opf"
+            media-type="application/oebps-package+xml"/>
+        </rootfiles>
+      </container> 
+      STRING
+
+      epub.container.should eq expected_output
+    end
   end
 
   describe "#content" do
+    it "creates a String of XML as a listing of the contents of the epub" do
+    end
   end
 
   describe "#generate_chapter" do
-    it "creates a String of XML that contains the chapter's title and text content from a Chapter object" do
-      some_chapter = WebnovelDL::Model::Chapter.new(
-        "Test Title",
-        "<p>some content goes here</p>",
-        "1234"
-      )
-
-      some_chapter.should be_a WebnovelDL::Model::Chapter
+    it "creates a String of XML that contains the chapter's title and text \
+      content from a Chapter object" do
 
       expected_output = <<-STRING
       <?xml version="1.0" encoding="UTF-8"?>
@@ -35,13 +47,6 @@ describe WebnovelDL::Epub do
       </html>
       STRING    
 
-      some_fiction = WebnovelDL::Model::Fiction.new(
-        "Fiction Title",
-        "Fiction Author",
-        [some_chapter]
-      )
-
-      epub = WebnovelDL::Epub.new(some_fiction)
       epub.generate_chapter(some_chapter).should eq expected_output
     end
   end
