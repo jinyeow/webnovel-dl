@@ -4,6 +4,12 @@ require "uri"
 require "./webnovel-dl/*"
 require "./webnovel-dl/provider/*"
 
+struct Option
+  property value
+  def initialize(@value : Bool | String | Nil = nil)
+  end
+end
+
 # `webnovel-dl` is a utility to download online fiction.
 # See docs/supported_sites.md.
 module WebnovelDL
@@ -16,21 +22,22 @@ module WebnovelDL
       ARGV.each do |url|
         uri      = URI.parse(url)
         provider = get_provider(uri.host)
-        id       = provider.get_id_from_url(uri.path.as(String))
+        id       = provider.get_id_from_url(uri.path.as(String)).as(String)
         fiction  = provider.get_fiction(id)
 
         begin
           raise "Couldn't get fiction." unless fiction
 
-          if opts[:debug]?
+          if opts[:debug].value
             pp provider
             pp fiction
           end
 
-          if opts[:output]?
+          if opts[:output].value
             # TODO: replace whitespace with underscores
-            Dir.mkdir(opts[:output]) unless Dir.exists? opts[:output]
-            Dir.cd(opts[:output])
+            dir = opts[:output].value.as(String)
+            Dir.mkdir(dir) unless Dir.exists? dir
+            Dir.cd(dir)
           end
 
           Dir.mkdir(fiction.title) unless Dir.exists? fiction.title
@@ -40,7 +47,7 @@ module WebnovelDL
           puts "Done."
         rescue ex
           puts "FUCK YOU"
-          puts ex.message if opts[:debug]?
+          puts ex.message if opts[:debug].value
           exit 2
         end
       end
@@ -72,7 +79,7 @@ Usage:
 
 STRING
 
-opts = {} of Symbol => String
+opts = {} of Symbol => Option
 OptionParser.parse! do |parser|
   parser.banner = USAGE
 
@@ -85,34 +92,34 @@ OptionParser.parse! do |parser|
   parser.separator("\nOUTPUT OPTIONS")
 
   parser.on("-o DIRECTORY", "--output=DIRECTORY", "Specify an output directory") { |o|
-    opts[:output] = o
+    opts[:output] = Option.new(o)
   }
 
   # TODO
   parser.on("-a EPUB", "--append=EPUB", "Appends the content of the URL to the EPUB.") do |a|
-    opts[:append] = a
+    opts[:append] = Option.new(a)
   end
 
   # TODO
-  parser.on("--as-one", "Combines the content of all URLs provided into ONE epub.") do
-    opts[:as_one] = "1"
+  parser.on("--as-one", "Combines the content of all URLs provided into ONE epub.") do |a|
+    opts[:as_one] = Option.new(a)
   end
 
   # TODO
   parser.on("-I", "--cover-image", "Specify the path to an image to use as the epub's titlepage.") do |i|
-    opts[:cover_image] = i
+    opts[:cover_image] = Option.new(i)
   end
 
   # TODO
   parser.on("-u EPUB", "--update=EPUB", "Update the specified EPUB to the latest chapter.") do |u|
-    opts[:update] = u
+    opts[:update] = Option.new(u)
   end
 
   parser.missing_option { puts "[!] ERROR: output argument required."; exit 2 }
 
   parser.separator("\nDEBUG OPTIONS")
 
-  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = "1" }
+  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = Option.new(d) }
 
   parser.invalid_option do |o|
     puts "[!] ERROR: #{o} is not a valid option."
