@@ -9,8 +9,13 @@ module WebnovelDL
   class Webnovel < Provider
     MAIN_URL = "https://www.webnovel.com"
 
+    def get_id_from_url(path : String) : String
+      /book\/(\d+)/.match(path)
+      $1
+    end
+
     def initialize
-      @client   = HTTP::Client
+      super
       res      = @client.get(MAIN_URL)
 
       @cookies = uninitialized HTTP::Cookies
@@ -24,7 +29,7 @@ module WebnovelDL
       url     = get_content_url(book_id, chapter_id)
       data    = get_json(url)
 
-      title   = data["data"]["chapterInfo"]["chapterName"].to_s
+      title   = data["data"]["chapterInfo"]["chapterName"].to_s.strip
       id      = data["data"]["chapterInfo"]["chapterId"].to_s
       content = data["data"]["chapterInfo"]["content"].to_s
 
