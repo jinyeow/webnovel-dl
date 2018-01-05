@@ -5,12 +5,18 @@ require "./model/fiction"
 
 module WebnovelDL
   abstract class Provider
+    abstract def get_id_from_url(path : String) : String
+
     abstract def get_chapter(book_id : String, chapter_id : String) : Chapter
     abstract def get_fiction(book_id : String) : Fiction
 
-    def after_chapter(chapter : WebnovelDL::Model::Chapter, num : Int32 | String = "")
+    def initialize
+      @client = HTTP::Client
+    end
+
+    def after_chapter(chapter : WebnovelDL::Model::Chapter, num : Int32 | Nil = nil)
       puts "Downloading ".colorize(:green).to_s + \
-        "chapter " + (num.is_a?(Int32) ? "#{num.to_s.rjust(4, '0')}. " : num) + \
+        "chapter " + (num ? "#{num.to_s.rjust(4, '0')}. " : "") + \
         "#{chapter.title}".colorize(:light_magenta).to_s
     end
 
