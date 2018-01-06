@@ -16,7 +16,15 @@ module WebnovelDL
       ARGV.each do |url|
         uri      = URI.parse(url)
         provider = get_provider(uri.host)
-        id       = provider.get_id_from_url(uri.path.as(String))
+
+        if provider.is_a?(SOL) && opts[:user]?
+          print "Enter password: "
+          opts[:password] = (STDIN.noecho(&.gets).as(String)).chomp
+          puts
+          provider.set_cookies(opts[:user], opts[:password])
+        end
+
+        id       = provider.get_id_from_url(uri.path.as(String)).as(String)
         fiction  = provider.get_fiction(id)
 
         begin
@@ -28,9 +36,9 @@ module WebnovelDL
           end
 
           if opts[:output]?
-            # TODO: replace whitespace with underscores
-            Dir.mkdir(opts[:output]) unless Dir.exists? opts[:output]
-            Dir.cd(opts[:output])
+            dir = opts[:output].as(String)
+            Dir.mkdir(dir) unless Dir.exists? dir
+            Dir.cd(dir)
           end
 
           Dir.mkdir(fiction.title) unless Dir.exists? fiction.title
@@ -53,6 +61,8 @@ module WebnovelDL
       return Webnovel.new
     when /royalroadl/
       return RoyalRoadL.new
+    when /storiesonline/
+      return SOL.new
     else
       puts <<-ERROR
       [!] ERROR: Not a valid provider.
@@ -104,15 +114,19 @@ OptionParser.parse! do |parser|
   end
 
   # TODO
-  parser.on("-u EPUB", "--update=EPUB", "Update the specified EPUB to the latest chapter.") do |u|
+  parser.on("-U EPUB", "--update=EPUB", "Update the specified EPUB to the latest chapter.") do |u|
     opts[:update] = u
+  end
+
+  parser.on("-u USER", "--user=USER", "Provide a username to login.") do |u|
+    opts[:user] = u
   end
 
   parser.missing_option { puts "[!] ERROR: output argument required."; exit 2 }
 
   parser.separator("\nDEBUG OPTIONS")
 
-  parser.on("-D", "--debug", "Turn on debug mode.") { |d| opts[:debug] = "1" }
+  parser.on("-D", "--debug", "Turn on debug mode.") { opts[:debug] = "1" }
 
   parser.invalid_option do |o|
     puts "[!] ERROR: #{o} is not a valid option."
