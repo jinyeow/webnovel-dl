@@ -38,6 +38,7 @@ module WebnovelDL
 
     def get_chapter(book_id : String, chapter_id : String) : WebnovelDL::Model::Chapter
       # res = follow_redirect_and_get(MAIN_URL + "/s/#{book_id}:#{chapter_id}")
+      url = MAIN_URL + "/s/#{book_id}:#{chapter_id}"
       res = @client.get(url, @cookies)
       xml = XML.parse_html(res.body)
 
