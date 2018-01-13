@@ -1,14 +1,12 @@
 require "http"
 require "xml"
-require "uri"
+# require "uri"
 
 module WebnovelDL
   class SOL < Provider
     MAIN_URL = "http://storiesonline.net"
 
     def get_id_from_url(path : String) : String
-      # /s\/(\d+)/.match(path)
-      # $1
       path
     end
 
@@ -26,14 +24,6 @@ module WebnovelDL
       cookies   = HTTP::Cookies.from_headers(res.headers)
       @cookies = HTTP::Headers.new
       @cookies  = cookies.add_request_headers(HTTP::Headers.new)
-      # res       = @client.get(res.headers["Location"], headers)
-
-      # pp HTTP::Cookies.from_headers(res.headers)
-      # # GET /home.php?a=2 HTTP/1.1
-      # @cookies = HTTP::Headers.new
-      # @cookies = HTTP::Cookies.from_headers(res.headers)
-      #                         .add_request_headers(@cookies.as(HTTP::Headers))
-      #                         .tap { |c| pp c }
     end
 
     def get_chapter(book_id : String, chapter_id : String) : WebnovelDL::Model::Chapter

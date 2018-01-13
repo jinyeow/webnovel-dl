@@ -1,4 +1,5 @@
 require "colorize"
+require "http"
 
 require "./model/chapter"
 require "./model/fiction"
