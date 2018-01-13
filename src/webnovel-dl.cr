@@ -63,6 +63,8 @@ module WebnovelDL
       return RoyalRoadL.new
     when /storiesonline/
       return SOL.new
+    when /fanfiction/
+      return FanFictionNet.new
     else
       puts <<-ERROR
       [!] ERROR: Not a valid provider.
