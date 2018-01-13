@@ -5,22 +5,21 @@ Like YouTube-dl for webnovels.
 ## Installation
 
 ```sh
+$ # git clone the repo
 $ git clone https://github.com/jinyeow/webnovel-dl
+$
+$ # build the binary
 $ cd webnovel-dl
 $ crystal build src/webnovel-dl.cr --release
+$
+$ # copy the binary into your $PATH
 $ cp webnovel-dl ~/.bin
 ```
-
-Or simple run `make`.
 
 ## Usage
 
 See `webnovel-dl --help`.
 See supported_sites.md for a list of providers.
-
-## Development
-
-TODO: Write development instructions here
 
 ## Contributing
 
@@ -32,4 +31,4 @@ TODO: Write development instructions here
 
 ## Contributors
 
-- [jinyeow](https://github.com/jinyeow) jinyeow - creator, maintainer
+- [jinyeow](https://github.com/jinyeow) - creator, maintainer
