@@ -61,7 +61,8 @@ module WebnovelDL
 
       chap_urls.each do |chap_url|
         /\/([a-z\-0-9]+)\/?$/.match(chap_url)
-        fiction.chapters << get_chapter(book_id, $1)
+        chap = get_chapter(book_id, $1)
+        (chap.content.split("</p><p>").size > 5 ? fiction.chapters << chap : break)
       end
 
       fiction
