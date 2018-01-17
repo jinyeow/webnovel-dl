@@ -65,6 +65,8 @@ module WebnovelDL
       return SOL.new
     when /fanfiction/
       return FanFictionNet.new
+    when /wuxiaworld/
+      return WuxiaWorld.new
     else
       puts <<-ERROR
       [!] ERROR: Not a valid provider.

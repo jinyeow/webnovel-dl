@@ -17,7 +17,7 @@ module WebnovelDL
 
     def after_chapter(chapter : WebnovelDL::Model::Chapter, num : Int32 | Nil = nil)
       puts "Downloading ".colorize(:green).to_s + \
-        "chapter " + (num ? "#{num.to_s.rjust(4, '0')}. " : "") + \
+        (num ? "chapter #{num.to_s.rjust(4, '0')}. " : "") + \
         "#{chapter.title}".colorize(:light_magenta).to_s
     end
 
