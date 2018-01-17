@@ -1,4 +1,5 @@
 require "xml"
+require "uri"
 
 require "../model/chapter"
 require "../model/fiction"
@@ -54,7 +55,9 @@ module WebnovelDL
 
       chap_urls = xml.xpath_nodes("//body//div[@itemprop='articleBody']//a")
                      .map(&.attributes["href"].content)
-                     .select { |c| c =~ /book|chapter|prologue|other-tales/ }
+                     .select do |c|
+                        URI.parse(c).path =~ /book|chapter|prologue|other-tales/
+                     end
 
       chap_urls.each do |chap_url|
         /\/([a-z\-0-9]+)\/?$/.match(chap_url)
