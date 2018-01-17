@@ -1,7 +1,8 @@
-webnovel.com
+# Supported Sites:
+------------------
 
-royalroadl.com
-
-storiesonline.net
-
-fanfiction.net
+* webnovel.com
+* royalroadl.com
+* storiesonline.net
+* fanfiction.net
+* wuxiaworld.com
