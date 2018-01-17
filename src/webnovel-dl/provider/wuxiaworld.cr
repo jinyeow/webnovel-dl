@@ -17,8 +17,9 @@ module WebnovelDL
       res = follow_redirect_and_get(chap_url)
       xml = XML.parse_html(res.body)
 
-      title = xml.xpath_nodes("//body//div[@itemprop='articleBody']//p/strong")[0]
-                 .text
+      title = xml.xpath_nodes(
+        "//body//header//h1[@class='entry-title']"
+      )[0].text
       content = xml.xpath_nodes("//body//div[@itemprop='articleBody']/*")
                    .to_a[1..-1]
                    .map(&.text)
@@ -49,8 +50,11 @@ module WebnovelDL
       )
       on_fiction(fiction)
 
-      chap_urls = xml.xpath_nodes("//body//div[@itemprop='articleBody']/div//a")
-                        .map(&.attributes["href"].content)
+      short_id = /(\w+)-index/.match(book_id).as(Regex::MatchData).captures.first
+
+      chap_urls = xml.xpath_nodes("//body//div[@itemprop='articleBody']//a")
+                     .map(&.attributes["href"].content)
+                     .select { |c| c =~ /book|chapter|prologue|other-tales/ }
 
       chap_urls.each do |chap_url|
         /\/([a-z\-0-9]+)\/?$/.match(chap_url)
