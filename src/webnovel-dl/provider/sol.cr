@@ -18,12 +18,12 @@ module WebnovelDL
       login_url = "https://storiesonline.net/sol-secure/login.php"
 
       # Login.php
-      res       = @client.post(login_url + "?theusername=#{user}&thepassword=#{pw}")
+      res      = @client.post(login_url + "?theusername=#{user}&thepassword=#{pw}")
 
       # GET /sol-secure/user/cookie_check.php?a=1 HTTP/1.1
-      cookies   = HTTP::Cookies.from_headers(res.headers)
+      cookies  = HTTP::Cookies.from_headers(res.headers)
       @cookies = HTTP::Headers.new
-      @cookies  = cookies.add_request_headers(HTTP::Headers.new)
+      @cookies = cookies.add_request_headers(HTTP::Headers.new)
     end
 
     def get_chapter(book_id : String, chapter_id : String) : WebnovelDL::Model::Chapter

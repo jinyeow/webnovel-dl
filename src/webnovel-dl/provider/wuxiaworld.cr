@@ -36,7 +36,6 @@ module WebnovelDL
       fiction_url = MAIN_URL + "/#{book_id}"
 
       res = follow_redirect_and_get(fiction_url)
-      raise "#{res.status_code}" unless res.status_code == 200
       xml = XML.parse_html(res.body)
 
       title = xml.xpath_nodes("//body//h1[@class='entry-title']")[0]
@@ -51,7 +50,7 @@ module WebnovelDL
       )
       on_fiction(fiction)
 
-      short_id = /(\w+)-index/.match(book_id).as(Regex::MatchData).captures.first
+      # short_id = /(\w+)-index/.match(book_id).as(Regex::MatchData).captures.first
 
       chap_urls = xml.xpath_nodes("//body//div[@itemprop='articleBody']//a")
                      .map(&.attributes["href"].content)
