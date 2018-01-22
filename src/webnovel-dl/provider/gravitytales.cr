@@ -48,7 +48,16 @@ module WebnovelDL
         "//body//div//div[@class='desc']/p"
       ).select do |p|
         p.text =~ /Author:/
-      end.first.text.sub("Author:", "").strip
+      end.first.text
+
+      if /Title:|Status:/.match(author)
+        author = /Author:(.+)Status/.match(author).as(Regex::MatchData)
+                                    .captures
+                                    .first.as(String)
+                                    .strip
+      else
+        author = author.sub("Author:", "").strip
+      end
 
       fiction = WebnovelDL::Model::Fiction.new(
         title,
