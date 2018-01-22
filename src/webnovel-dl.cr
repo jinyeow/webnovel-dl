@@ -17,11 +17,18 @@ module WebnovelDL
         uri      = URI.parse(url)
         provider = get_provider(uri.host)
 
-        if provider.is_a?(SOL) && opts[:user]?
-          print "Enter password: "
-          opts[:password] = (STDIN.noecho(&.gets).as(String)).chomp
-          puts
-          provider.set_cookies(opts[:user], opts[:password])
+        if provider.is_a?(SOL)
+          if opts[:user]?
+            print "Enter password: "
+            opts[:password] = (STDIN.noecho(&.gets).as(String)).chomp
+            puts
+            provider.set_cookies(opts[:user], opts[:password])
+          else
+            abort <<-STRING
+            [x] storiesonline.net requires a login.
+                  Use: #{PROGRAM_NAME} -u USERNAME URL
+            STRING
+          end
         end
 
         id       = provider.get_id_from_url(uri.path.as(String)).as(String)
@@ -67,6 +74,8 @@ module WebnovelDL
       return FanFictionNet.new
     when /wuxiaworld/
       return WuxiaWorld.new
+    when /gravitytales/
+      return GravityTales.new
     else
       puts <<-ERROR
       [!] ERROR: Not a valid provider.
