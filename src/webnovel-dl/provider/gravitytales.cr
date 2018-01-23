@@ -19,7 +19,7 @@ module WebnovelDL
     def get_chapter(book_id : String, chapter_id : String) WebnovelDL::Model::Chapter
       chap_url = CHAPTER_URL + "/#{book_id}/#{chapter_id}"
 
-      res = follow_redirect_and_get(chap_url)
+      res = get_and_follow(chap_url)
       xml = XML.parse_html(res.body)
 
       title = xml.xpath_nodes("//body//div//h4").first.text
@@ -35,7 +35,7 @@ module WebnovelDL
     def get_fiction(book_id : String) WebnovelDL::Model::Fiction
       fiction_url = MAIN_URL + "/novel/#{book_id}"
 
-      res = follow_redirect_and_get(fiction_url)
+      res = get_and_follow(fiction_url)
       raise "Not 200" unless res.success?
       xml = XML.parse_html(res.body)
 
@@ -97,21 +97,5 @@ module WebnovelDL
       fiction
     end
 
-    private def follow_redirect_and_get(url, header = nil)
-      @client.get(url, header) do |response|
-        loop do
-          case response.status_code
-          when 200..299
-            return response
-          when 300..399
-            new_url  = response.headers["Location"]
-            response = @client.get(new_url, header)
-          else
-            exit 2
-          end
-        end
-        response
-      end
-    end
   end
 end
