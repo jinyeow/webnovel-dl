@@ -55,7 +55,8 @@ module WebnovelDL
       chap_urls = xml.xpath_nodes("//body//div[@itemprop='articleBody']//a")
                      .map(&.attributes["href"].content)
                      .select do |c|
-                        URI.parse(c).path =~ /book|chapter|prologue|other-tales/
+                        URI.parse(c).host =~ /wuxiaworld/ && \
+                          URI.parse(c).path =~ /book|chapter|prologue|other-tales/
                      end
 
       chap_urls.each do |chap_url|
