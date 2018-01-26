@@ -41,16 +41,19 @@ module WebnovelDL
       title = xml.xpath_nodes("//body//h1[@class='entry-title']")[0]
                  .text
                  .sub(/\s+[–\-]\s+Index/, "")
-      author = xml.xpath_nodes("//body//div[@itemprop='articleBody']/p")
-                  .select { |p| p.text =~ /Author/ }
-                  .first
-                  .text
-      pp author
-      author = /Author:?(.+)$/.match(author).as(Regex::MatchData)
-                  .captures
-                  .first.as(String)
-                  .strip("  ").strip # removes the weird 194_u8 whitespace
-                                     # character as well as other whitespace
+      begin
+        author = xml.xpath_nodes("//body//div[@itemprop='articleBody']/p")
+                    .select { |p| p.text =~ /Author/ }
+                    .first
+                    .text
+        author = /Author:?(.+)$/.match(author).as(Regex::MatchData)
+                    .captures
+                    .first.as(String)
+                    .strip("  ").strip # removes the weird 194_u8 whitespace
+                                       # character as well as other whitespace
+      rescue
+        author = ""
+      end
 
       fiction = WebnovelDL::Model::Fiction.new(
         title,
