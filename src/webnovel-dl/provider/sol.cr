@@ -26,7 +26,7 @@ module WebnovelDL
       @cookies = cookies.add_request_headers(HTTP::Headers.new)
     end
 
-    def get_chapter(book_id : String, chapter_id : String) : WebnovelDL::Model::Chapter
+    def get_chapter(book_id : String, chapter_id : String) : Chapter
       # res = get_and_follow(MAIN_URL + "/s/#{book_id}:#{chapter_id}")
       url = MAIN_URL + "/s/#{book_id}:#{chapter_id}"
       res = @client.get(url, @cookies)
@@ -37,12 +37,12 @@ module WebnovelDL
                    .map(&.text).join("</p><p>")
       content = "<p>#{content.gsub(/[\r\n]+/, "</p><p>")}</p>"
 
-      WebnovelDL::Model::Chapter.new(title, content, chapter_id).tap do |c|
+      Chapter.new(title, content, chapter_id).tap do |c|
         after_chapter(c)
       end
     end
 
-    def get_fiction(book_id : String) : WebnovelDL::Model::Fiction
+    def get_fiction(book_id : String) : Fiction
       /s\/(\d+)/.match(book_id)
       book_id = $1
       url = MAIN_URL + "/s/#{book_id}"
@@ -59,7 +59,7 @@ module WebnovelDL
         get_chapter(book_id, $1)
       end
 
-      WebnovelDL::Model::Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+      Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
     end
   end
 end

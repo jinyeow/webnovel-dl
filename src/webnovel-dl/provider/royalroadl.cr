@@ -15,7 +15,7 @@ module WebnovelDL
       $1
     end
 
-    def get_chapter(chapter_id : String) : WebnovelDL::Model::Chapter
+    def get_chapter(chapter_id : String) : Chapter
       url = MAIN_URL + "/fiction/chapter/#{chapter_id}"
       res = get_and_follow(url)
       xml = XML.parse_html(res.body)
@@ -25,14 +25,14 @@ module WebnovelDL
       content = "<p>#{content.gsub(/[\r\n]+/, "</p><p>")}</p>"
       title = xml.xpath_nodes("//body//div[contains(@class, 'col-md-5')]/h1")[0].text
 
-      WebnovelDL::Model::Chapter.new(title, content, chapter_id)
+      Chapter.new(title, content, chapter_id)
     end
 
-    def get_chapter(book_id : String, chapter_id : String) : WebnovelDL::Model::Chapter
+    def get_chapter(book_id : String, chapter_id : String) : Chapter
       get_chapter(chapter_id).tap { |c| after_chapter(c) }
     end
 
-    def get_fiction(id : String) : WebnovelDL::Model::Fiction
+    def get_fiction(id : String) : Fiction
       url = MAIN_URL + "/fiction/#{id}"
       res = get_and_follow(url)
       xml = XML.parse_html(res.body)
@@ -45,7 +45,7 @@ module WebnovelDL
         get_chapter(id, $1)
       end
 
-      WebnovelDL::Model::Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+      Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
     end
   end
 end

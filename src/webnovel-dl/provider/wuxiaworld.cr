@@ -12,7 +12,7 @@ module WebnovelDL
       path
     end
 
-    def get_chapter(book_id : String, chapter_id : String) : WebnovelDL::Model::Chapter
+    def get_chapter(book_id : String, chapter_id : String) : Chapter
       chap_url = MAIN_URL + "/#{book_id}/#{chapter_id}"
 
       res = get_and_follow(chap_url)
@@ -28,11 +28,11 @@ module WebnovelDL
                    .gsub(/\n+/, "</p><p>")
       content = "<p>" + content + "</p>"
 
-      WebnovelDL::Model::Chapter.new(title, content, chapter_id)
+      Chapter.new(title, content, chapter_id)
         .tap { |c| after_chapter(c) }
     end
 
-    def get_fiction(book_id : String) WebnovelDL::Model::Fiction
+    def get_fiction(book_id : String) Fiction
       fiction_url = MAIN_URL + "/#{book_id}"
 
       res = get_and_follow(fiction_url)
@@ -55,10 +55,10 @@ module WebnovelDL
         author = ""
       end
 
-      fiction = WebnovelDL::Model::Fiction.new(
+      fiction = Fiction.new(
         title,
         author,
-        Array(WebnovelDL::Model::Chapter).new
+        Array(Chapter).new
       )
       on_fiction(fiction)
 
