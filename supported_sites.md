@@ -1,5 +1,4 @@
 # Supported Sites:
-------------------
 
 * webnovel.com
 * royalroadl.com

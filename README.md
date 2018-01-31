@@ -19,7 +19,7 @@ $ cp webnovel-dl ~/.bin
 ## Usage
 
 See `webnovel-dl --help`.
-See supported_sites.md for a list of providers.
+See `supported_sites.md` for a list of providers.
 
 ## Contributing
 
