@@ -18,13 +18,13 @@ module WebnovelDL
       @client = HTTP::Client
     end
 
-    def after_chapter(chapter : Chapter, num : Int32 | Nil = nil)
+    protected def after_chapter(chapter : Chapter, num : Int32 | Nil = nil)
       puts "Downloading ".colorize(:green).to_s + \
         (num ? "chapter #{num.to_s.rjust(4, '0')}. " : "") + \
         "#{chapter.title}".colorize(:light_magenta).to_s
     end
 
-    def on_fiction(fiction : Fiction)
+    protected def on_fiction(fiction : Fiction)
       puts "Downloading ".colorize(:green).to_s + \
         "#{fiction.title}".colorize(:light_blue).to_s + \
         " by " + "#{fiction.author}".colorize(:light_red).to_s

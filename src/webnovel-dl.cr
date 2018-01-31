@@ -1,103 +1,10 @@
 require "option_parser"
-require "uri"
 
-require "./webnovel-dl/*"
-require "./webnovel-dl/provider/*"
-
-# `webnovel-dl` is a utility to download online fiction.
-# See docs/supported_sites.md.
-module WebnovelDL
-  def self.main(opts : Hash)
-    if ARGV.size < 1
-      puts "[!] ERROR: missing url(s)."
-      puts USAGE
-      exit 1
-    else
-      ARGV.each do |url|
-        uri      = URI.parse(url)
-        provider = get_provider(uri.host)
-
-        if provider.is_a?(SOL)
-          if opts[:user]?
-            print "Enter password: "
-            opts[:password] = (STDIN.noecho(&.gets).as(String)).chomp
-            puts
-            provider.set_cookies(opts[:user], opts[:password])
-          else
-            abort <<-STRING
-            [x] storiesonline.net requires a login.
-                  Use: #{PROGRAM_NAME} -u USERNAME URL
-            STRING
-          end
-        end
-
-        id       = provider.get_id_from_url(uri.path.as(String)).as(String)
-        fiction  = provider.get_fiction(id)
-
-        begin
-          raise "Couldn't get fiction." unless fiction
-
-          if opts[:debug]?
-            pp provider
-            pp fiction
-          end
-
-          if opts[:output]?
-            dir = opts[:output].as(String)
-            Dir.mkdir(dir) unless Dir.exists? dir
-            Dir.cd(dir)
-          end
-
-          Dir.mkdir(fiction.title) unless Dir.exists? fiction.title
-          Dir.cd(fiction.title)
-          doc = Epub.new(fiction)
-          doc.render("#{fiction.title}.epub")
-          puts "Done."
-        rescue ex
-          puts "FUCK YOU"
-          puts ex.message if opts[:debug]?
-          exit 2
-        end
-      end
-    end
-  end
-
-  def self.get_provider(host)
-    case host
-    when /webnovel.com/
-      return Webnovel.new
-    when /royalroadl/
-      return RoyalRoadL.new
-    when /storiesonline/
-      return SOL.new
-    when /fanfiction/
-      return FanFictionNet.new
-    when /wuxiaworld/
-      return WuxiaWorld.new
-    when /gravitytales/
-      return GravityTales.new
-    else
-      puts <<-ERROR
-      [!] ERROR: Not a valid provider.
-          
-          Choose from:
-            - webnovel.com
-            - royalroadl.com
-      ERROR
-      exit 1
-    end
-  end
-end
-
-USAGE = <<-STRING
-Usage:
-  #{PROGRAM_NAME} [OPTIONS] [URL(S)]
-
-STRING
+require "./webnovel-dl/cli"
 
 opts = {} of Symbol => String
 OptionParser.parse! do |parser|
-  parser.banner = USAGE
+  parser.banner = WebnovelDL::CLI::USAGE
 
   parser.on("-h", "--help", "Show this message.") { puts parser; exit }
   parser.on("-v", "--version", "Show version information.") {
@@ -110,6 +17,18 @@ OptionParser.parse! do |parser|
   parser.on("-o DIRECTORY", "--output=DIRECTORY", "Specify an output directory") { |o|
     opts[:output] = o
   }
+
+  parser.on("-u USER", "--user=USER", "Provide a username to login.") do |u|
+    opts[:user] = u
+  end
+
+  parser.missing_option { puts "[!] ERROR: output argument required."; exit 2 }
+
+  parser.separator("\nDEBUG OPTIONS")
+
+  parser.on("-D", "--debug", "Turn on debug mode.") { opts[:debug] = "1" }
+
+  parser.separator("\nRESERVED")
 
   # TODO
   parser.on("-a EPUB", "--append=EPUB", "Appends the content of the URL to the EPUB.") do |a|
@@ -131,16 +50,6 @@ OptionParser.parse! do |parser|
     opts[:update] = u
   end
 
-  parser.on("-u USER", "--user=USER", "Provide a username to login.") do |u|
-    opts[:user] = u
-  end
-
-  parser.missing_option { puts "[!] ERROR: output argument required."; exit 2 }
-
-  parser.separator("\nDEBUG OPTIONS")
-
-  parser.on("-D", "--debug", "Turn on debug mode.") { opts[:debug] = "1" }
-
   parser.invalid_option do |o|
     puts "[!] ERROR: #{o} is not a valid option."
     puts "    See webnovel-dl --help for a list of valid options."
@@ -153,5 +62,5 @@ end
 
 pp ARGV if opts[:debug]?
 
-WebnovelDL.main(opts)
+WebnovelDL::CLI.run(opts)
 

@@ -53,13 +53,15 @@ module WebnovelDL
       author = xml.xpath_node("//body//a[@rel='author']").as(XML::Node)["href"]
                   .sub("/a/", "")
 
+      fiction = Fiction.new(title, author, Array(Chapter).new).tap { |f| on_fiction(f) }
+
       chapters = xml.xpath_nodes("//body//div[@id='index-list']/span[@class='link']/a")
                     .map do |node|
         /\d+:(\d+)/.match(node["href"]) # "/s/b_id:c_id/chapter_title"
         get_chapter(book_id, $1)
       end
 
-      Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+      fiction.tap { |f| f.chapters = chapters }
     end
   end
 end
