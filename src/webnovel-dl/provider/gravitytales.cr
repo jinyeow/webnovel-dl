@@ -16,10 +16,10 @@ module WebnovelDL
       /\/([a-z\-]+)$/.match(path).as(Regex::MatchData).captures.first.as(String)
     end
 
-    def get_chapter(book_id : String, chapter_id : String) WebnovelDL::Model::Chapter
+    def get_chapter(book_id : String, chapter_id : String) Chapter
       chap_url = CHAPTER_URL + "/#{book_id}/#{chapter_id}"
 
-      res = follow_redirect_and_get(chap_url)
+      res = get_and_follow(chap_url)
       xml = XML.parse_html(res.body)
 
       title = xml.xpath_nodes("//body//div//h4").first.text
@@ -28,14 +28,14 @@ module WebnovelDL
       end.join("</p><p>").gsub(/\n+/, "</p><p>")
       content = "<p>" + content + "</p>"
 
-      WebnovelDL::Model::Chapter.new(title, content, chapter_id)
+      Chapter.new(title, content, chapter_id)
         .tap { |c| after_chapter(c) }
     end
 
-    def get_fiction(book_id : String) WebnovelDL::Model::Fiction
+    def get_fiction(book_id : String) Fiction
       fiction_url = MAIN_URL + "/novel/#{book_id}"
 
-      res = follow_redirect_and_get(fiction_url)
+      res = get_and_follow(fiction_url)
       raise "Not 200" unless res.success?
       xml = XML.parse_html(res.body)
 
@@ -59,10 +59,10 @@ module WebnovelDL
         author = author.sub("Author:", "").strip
       end
 
-      fiction = WebnovelDL::Model::Fiction.new(
+      fiction = Fiction.new(
         title,
         author,
-        Array(WebnovelDL::Model::Chapter).new
+        Array(Chapter).new
       ).tap { |f| on_fiction(f) }
 
       # GET CHAPTER URLS
@@ -97,21 +97,5 @@ module WebnovelDL
       fiction
     end
 
-    private def follow_redirect_and_get(url, header = nil)
-      @client.get(url, header) do |response|
-        loop do
-          case response.status_code
-          when 200..299
-            return response
-          when 300..399
-            new_url  = response.headers["Location"]
-            response = @client.get(new_url, header)
-          else
-            exit 2
-          end
-        end
-        response
-      end
-    end
   end
 end

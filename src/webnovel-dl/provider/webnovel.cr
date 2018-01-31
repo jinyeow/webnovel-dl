@@ -16,16 +16,16 @@ module WebnovelDL
 
     def initialize
       super
-      res      = @client.get(MAIN_URL)
 
+      # Get CSRF Token
+      res      = @client.get(MAIN_URL)
       @cookies = uninitialized HTTP::Cookies
       @cookies = res.cookies
-
       @csrf    = uninitialized String
       @csrf    = @cookies["_csrfToken"].value
     end
 
-    def get_chapter(book_id : String, chapter_id : String)
+    def get_chapter(book_id : String, chapter_id : String) : Chapter
       url     = get_content_url(book_id, chapter_id)
       data    = get_json(url)
 
@@ -35,14 +35,14 @@ module WebnovelDL
 
       content = "<p>#{content.gsub(/[\r\n]+/, "</p><p>")}</p>"
 
-      WebnovelDL::Model::Chapter.new(title, content, id)
+      Chapter.new(title, content, id)
     end
 
-    def get_chapter(book_id : String, chapter_id : String, num : Int32)
+    def get_chapter(book_id : String, chapter_id : String, num : Int32) : Chapter
       get_chapter(book_id, chapter_id).tap { |c| after_chapter(c, num) }
     end
 
-    def get_fiction(book_id : String)
+    def get_fiction(book_id : String) : Fiction
       url      = get_chapter_url(book_id)
       data     = get_json(url)
 
@@ -55,9 +55,9 @@ module WebnovelDL
       chapters = chapters.map_with_index do |chap, i|
         get_chapter(book_id, chap["chapterId"].to_s, i + 1)
       end
-      WebnovelDL::Model::Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
-    rescue
-      nil
+      Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+    # rescue
+    #   nil # what is this for?
     end
 
     # TODO: add error checking begin/rescue

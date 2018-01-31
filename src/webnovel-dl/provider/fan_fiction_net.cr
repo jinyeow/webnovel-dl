@@ -14,7 +14,7 @@ module WebnovelDL
       $1
     end
 
-    def get_chapter(fiction_id : String, chapter_id : String) : WebnovelDL::Model::Chapter
+    def get_chapter(fiction_id : String, chapter_id : String) : Chapter
       chapter_url = MAIN_URL + "/#{fiction_id}/#{chapter_id}"
 
       res = @client.get(chapter_url)
@@ -24,10 +24,10 @@ module WebnovelDL
                    .map(&.text)
                    .join("</p><p>")
       content = "<p>" + content + "</p>"
-      WebnovelDL::Model::Chapter.new(chapter_id, content, chapter_id).tap { |c| after_chapter(c) }
+      Chapter.new(chapter_id, content, chapter_id).tap { |c| after_chapter(c) }
     end
 
-    def get_fiction(fiction_id : String) : WebnovelDL::Model::Fiction
+    def get_fiction(fiction_id : String) : Fiction
       fiction_url = MAIN_URL + "/#{fiction_id}"
 
       res = @client.get(fiction_url)
@@ -36,7 +36,7 @@ module WebnovelDL
       title = xml.xpath_nodes("//body//*[@id='profile_top']/b")[0].text
       author = xml.xpath_nodes("//body//*[@id='profile_top']/a")[0].text
 
-      fiction = WebnovelDL::Model::Fiction.new(title, author, Array(WebnovelDL::Model::Chapter).new)
+      fiction = Fiction.new(title, author, Array(Chapter).new)
       on_fiction(fiction)
 
       # get the chapter_count from <select id='chap_select'...> number of <option>
