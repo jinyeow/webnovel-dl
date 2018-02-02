@@ -6,7 +6,7 @@ require "./model/chapter"
 
 module WebnovelDL
   class Epub
-    CSS = <<-STRING
+    private CSS = <<-STRING
 
     @font-face {
         font-family: "Source Sans Pro";
@@ -31,26 +31,41 @@ module WebnovelDL
     .fiction-author {
     padding-left: 16px;
     }
-
     STRING
 
-    FORMAT = "%Y-%m-%d'T'%I:%M:%S'Z'"
+    private FORMAT = "%Y-%m-%d'T'%I:%M:%S'Z'"
 
-    struct ChapterNameAssoc
+    private struct ChapterNameAssoc
       property title, file
 
       def initialize(@title : String, @file : String)
       end
     end
 
-    property fiction
-    property uuid : String
-
-    def initialize(@fiction : WebnovelDL::Model::Fiction)
-      @uuid = UUID.random.to_s
+    def initialize(@fiction : WebnovelDL::Model::Fiction, @uuid : String = UUID.random.to_s)
     end
 
-    def container : String
+    def render(filename : String)
+      file = filename
+      File.open(file, "w") do |f|
+        Zip::Writer.open(f) do |zip|
+          zip.add "mimetype", "application/epub+zip"
+          zip.add "META-INF/container.xml", container()
+          zip.add "content.opf", content()
+          zip.add "nav.xhtml", nav()
+          zip.add "ssp.otf", "../ssp.otf"
+          zip.add "style.css", CSS
+
+          i = 1
+          @fiction.chapters.each do |ch|
+            zip.add "chapter#{i}.xhtml", generate_chapter(ch)
+            i += 1
+          end
+        end
+      end
+    end
+
+    private def container : String
       <<-STRING
       <?xml version="1.0" encoding="UTF-8"?>
       <container
@@ -65,7 +80,7 @@ module WebnovelDL
       STRING
     end
 
-    def content : String
+    private def content : String
       i = 1
       names = Array(ChapterNameAssoc).new
       @fiction.chapters.each do |ch|
@@ -105,7 +120,7 @@ module WebnovelDL
       STRING
     end
 
-    def nav : String
+    private def nav : String
       i = 1
       names = Array(ChapterNameAssoc).new
       @fiction.chapters.each do |ch|
@@ -137,7 +152,7 @@ module WebnovelDL
       STRING
     end
 
-    def generate_chapter(chapter : WebnovelDL::Model::Chapter) String
+    private def generate_chapter(chapter : WebnovelDL::Model::Chapter) String
       result = <<-STRING
       <?xml version="1.0" encoding="UTF-8"?>
       <html xmlns="http://www.w3.org/1999/xhtml"
@@ -155,26 +170,6 @@ module WebnovelDL
         </body>
       </html>
       STRING
-    end
-
-    def render(filename : String)
-      file = filename
-      File.open(file, "w") do |f|
-        Zip::Writer.open(f) do |zip|
-          zip.add "mimetype", "application/epub+zip"
-          zip.add "META-INF/container.xml", container()
-          zip.add "content.opf", content()
-          zip.add "nav.xhtml", nav()
-          zip.add "ssp.otf", "../ssp.otf"
-          zip.add "style.css", CSS
-
-          i = 1
-          @fiction.chapters.each do |ch|
-            zip.add "chapter#{i}.xhtml", generate_chapter(ch)
-            i += 1
-          end
-        end
-      end
     end
 
     # NOTE: unused in favor of UUID.random

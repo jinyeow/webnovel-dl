@@ -36,8 +36,7 @@ module WebnovelDL
       title = xml.xpath_nodes("//body//*[@id='profile_top']/b")[0].text
       author = xml.xpath_nodes("//body//*[@id='profile_top']/a")[0].text
 
-      fiction = Fiction.new(title, author, Array(Chapter).new)
-      on_fiction(fiction)
+      fiction = Fiction.new(title, author, Array(Chapter).new).tap { |f| on_fiction(f) }
 
       # get the chapter_count from <select id='chap_select'...> number of <option>
       # divide the size by 2 because there are 2 sets of <select> top and bottom

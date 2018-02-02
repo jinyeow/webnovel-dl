@@ -52,10 +52,13 @@ module WebnovelDL
       url      = get_content_url(book_id, chapters.first["chapterId"].to_s)
       author   = get_json(url)["data"]["bookInfo"]["authorName"].to_s
 
+      fiction  = Fiction.new(title, author, Array(Chapter).new).tap { |f| on_fiction(f) }
+
       chapters = chapters.map_with_index do |chap, i|
         get_chapter(book_id, chap["chapterId"].to_s, i + 1)
       end
-      Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+
+      fiction.tap { |f| f.chapters = chapters }
     # rescue
     #   nil # what is this for?
     end

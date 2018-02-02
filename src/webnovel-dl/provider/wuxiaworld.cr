@@ -59,8 +59,7 @@ module WebnovelDL
         title,
         author,
         Array(Chapter).new
-      )
-      on_fiction(fiction)
+      ).tap { |f| on_fiction(f) }
 
       # short_id = /(\w+)-index/.match(book_id).as(Regex::MatchData).captures.first
 

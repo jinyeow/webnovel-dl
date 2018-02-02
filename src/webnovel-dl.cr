@@ -36,11 +36,6 @@ OptionParser.parse! do |parser|
   end
 
   # TODO
-  parser.on("--as-one", "Combines the content of all URLs provided into ONE epub.") do
-    opts[:as_one] = "1"
-  end
-
-  # TODO
   parser.on("-I", "--cover-image", "Specify the path to an image to use as the epub's titlepage.") do |i|
     opts[:cover_image] = i
   end
@@ -48,6 +43,11 @@ OptionParser.parse! do |parser|
   # TODO
   parser.on("-U EPUB", "--update=EPUB", "Update the specified EPUB to the latest chapter.") do |u|
     opts[:update] = u
+  end
+
+  # TODO
+  parser.on("--as-one", "Combines the content of all URLs provided into ONE epub.") do
+    opts[:as_one] = "1"
   end
 
   parser.invalid_option do |o|
