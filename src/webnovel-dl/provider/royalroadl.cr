@@ -49,4 +49,3 @@ module WebnovelDL
     end
   end
 end
-

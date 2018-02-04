@@ -59,7 +59,7 @@ module WebnovelDL
             full-path="content.opf"
             media-type="application/oebps-package+xml"/>
         </rootfiles>
-      </container> 
+      </container>
       STRING
     end
 
@@ -78,7 +78,7 @@ module WebnovelDL
         xmlns="http://www.idpf.org/2007/opf"
         unique-identifier="Id">
         <metadata>
-          <dc:identifier id="Id">#{generateUUID}</dc:identifier>
+          <dc:identifier id="Id">#{generate_uuid}</dc:identifier>
           <meta property="dcterms:modified">#{Time.now.to_s(FORMAT)}</meta>
           <dc:language>en</dc:language>
           <dc:title xml:lang="en">#{@fiction.title}</dc:title>
@@ -128,10 +128,10 @@ module WebnovelDL
                 acc + "<li><a href=\"" + name.file + ".xhtml\">" + name.title + "</a></li>"
               end}
           </ol>
-      
+
         </nav>
        </body>
-      </html> 
+      </html>
       STRING
     end
 
@@ -176,7 +176,7 @@ module WebnovelDL
     end
 
     # NOTE: unused in favor of UUID.random
-    private def generateUUID : String
+    private def generate_uuid : String
       pattern = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
       t = Time.new.epoch
       proc = ->(c : Char) {
@@ -197,4 +197,3 @@ module WebnovelDL
     end
   end
 end
-
