@@ -21,5 +21,3 @@ def epub
 
   WebnovelDL::Epub.new(some_fiction)
 end
-
-

@@ -11,7 +11,7 @@ OptionParser.parse! do |parser|
     puts "v#{WebnovelDL::VERSION}"
     exit
   }
-  
+
   parser.separator("\nOUTPUT OPTIONS")
 
   parser.on("-o DIRECTORY", "--output=DIRECTORY", "Specify an output directory") { |o|
@@ -56,11 +56,10 @@ OptionParser.parse! do |parser|
     exit 2
   end
 
-  # NOTE: maybe can use #unknown_args to pass along the provider and book id with the 
+  # NOTE: maybe can use #unknown_args to pass along the provider and book id with the
   #   opts Hash instead of as ARGV.
 end
 
 pp ARGV if opts[:debug]?
 
 WebnovelDL::CLI.run(opts)
-

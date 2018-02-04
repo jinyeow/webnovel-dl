@@ -85,7 +85,7 @@ module WebnovelDL
       else
         puts <<-ERROR
         [!] ERROR: Not a valid provider.
-            
+
             Choose from:
               - webnovel.com
               - royalroadl.com
@@ -95,4 +95,3 @@ module WebnovelDL
     end
   end
 end
-

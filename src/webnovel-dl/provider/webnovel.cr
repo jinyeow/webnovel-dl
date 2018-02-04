@@ -70,7 +70,7 @@ module WebnovelDL
       JSON.parse(body)
     end
 
-    private def get_content_url(book_id : String, chapter_id : String) 
+    private def get_content_url(book_id : String, chapter_id : String)
       "https://www.webnovel.com/apiajax/chapter/GetContent?\
         _csrfToken=#{@csrf}&bookId=#{book_id}&chapterId=#{chapter_id}"
     end
