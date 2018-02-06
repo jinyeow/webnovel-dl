@@ -49,5 +49,9 @@ module WebnovelDL
 
       fiction.tap { |f| f.chapters = chapters }
     end
+
+    protected def build_redirect_url(response) : String
+      "http://royalroadl.com#{response.headers["Location"]}"
+    end
   end
 end
