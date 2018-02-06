@@ -40,12 +40,15 @@ module WebnovelDL
       author = xml.xpath_node("//body//span[@property='name']").as(XML::Node).text
       title = xml.xpath_node("//body//h1[@property='name']").as(XML::Node).text.strip
 
-      chapters = xml.xpath_nodes("//body//tbody/tr").map do |node|
+      fiction = Fiction.new(title, author, Array(Chapter).new).tap { |f| on_fiction(f) }
+
+      chapters = xml
+        .xpath_nodes("//body//table[@id='chapters']//tbody/tr").map do |node|
         /chapter\/(\d+)/.match(node.attributes["data-url"].text)
         get_chapter(id, $1)
       end
 
-      Fiction.new(title, author, chapters).tap { |f| on_fiction(f) }
+      fiction.tap { |f| fiction.chapters = chapters }
     end
 
     protected def build_redirect_url(response) : String
