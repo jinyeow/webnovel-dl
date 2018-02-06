@@ -42,7 +42,8 @@ module WebnovelDL
 
       fiction = Fiction.new(title, author, Array(Chapter).new).tap { |f| on_fiction(f) }
 
-      chapters = xml.xpath_nodes("//body//tbody/tr").map do |node|
+      chapters = xml
+        .xpath_nodes("//body//table[@id='chapters']//tbody/tr").map do |node|
         /chapter\/(\d+)/.match(node.attributes["data-url"].text)
         get_chapter(id, $1)
       end
