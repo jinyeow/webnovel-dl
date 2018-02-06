@@ -37,7 +37,8 @@ module WebnovelDL
           when 200..299
             return response
           when 300..399
-            new_url  = response.headers["Location"]
+            # new_url  = response.headers["Location"]
+            new_url  = build_redirect_url(response)
             response = @client.get(new_url, header)
           else
             exit 2
@@ -45,6 +46,10 @@ module WebnovelDL
         end
         response
       end
+    end
+
+    protected def build_redirect_url(response) : String
+      response.headers["Location"]
     end
   end
 end
